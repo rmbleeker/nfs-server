@@ -1,0 +1,11 @@
+---
+- name: reload nfs
+  command: 'exportfs -ra'
+
+- name: restart nfs
+  service:
+    name: "{{ nfs_server_daemon }}"
+    state: restarted
+    enabled: yes
+
+...
