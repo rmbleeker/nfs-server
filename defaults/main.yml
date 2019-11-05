@@ -1,0 +1,12 @@
+---
+#nfs_exports: []
+
+nfs_rpc_state: stopped
+nfs_rpc_masked: yes
+nfs_rpc_enabled: no
+nfs_rpc_services:
+  - rpcbind.service
+  - rpcbind.socket
+  - rpc-statd.service
+
+...

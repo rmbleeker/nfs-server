@@ -1,0 +1,24 @@
+---
+
+# RPC services are not necessary for NFSv4
+- name: Mask rpc services
+  systemd:
+    name: '{{ item }}'
+    state: '{{ nfs_rpc_state }}'
+    masked: '{{ nfs_rpc_masked }}'
+    enabled: '{{ nfs_rpc_enabled }}'
+  loop: '{{ nfs_rpc_services }}'
+  notify: restart nfs
+
+- name: Disable NFSv2 and NFSv3
+  replace:
+    path: /etc/sysconfig/nfs
+    regexp: '{{ item }}'
+    replace: '\1"-N 2 -N 3"'
+    backup: yes
+  loop:
+    - ^(RPCNFSDARGS=).*
+    - ^(RPCMOUNTDOPTS=).*
+  notify: restart nfs
+
+...

@@ -1,0 +1,58 @@
+---
+# Include variables and define needed variables.
+- name: Include OS-specific variables.
+  include_vars: "{{ ansible_distribution }}.yml"
+
+- name: Include overrides specific to RHEL 6.
+  include_vars: RedHat-6.yml
+  when:
+    - ansible_distribution == "RedHat"
+    - ansible_distribution_major_version == "6"
+
+- name: Ensure NFS utilities are installed.
+  package:
+    name: "{{ nfs_server_packages }}"
+    state: present
+
+- name: Ensure NFS is running.
+  service:
+    name: "{{ nfs_server_daemon }}"
+    state: started
+    enabled: yes
+
+#- name: Ensure rpcbind is running as configured.
+#  service:
+#    name: rpcbind
+#    state: "{{ nfs_rpc_state }}"
+#    enabled: "{{ nfs_rpc_enabled }}"
+
+- include_tasks: configure-rpc.yml
+
+- name: Ensure directories to export exist.
+  file:
+    path: "{{ item.path | mandatory }}"
+    state: directory
+    owner: "{{ item.owner | default(root) }}"
+    group: "{{ item.group | default(root) }}"
+    mode: "{{ item.mode | default(0755) }}"
+    setype: "{{ item.setype | default(nfs_t) }}"
+  loop: "{{ nfs_exports }}"
+
+- name: Populate the exports file.
+  template:
+    src: exports.j2
+    dest: /etc/exports
+    mode: 0644
+    owner: root
+    group: root
+  notify: reload nfs
+
+- name: Set SELinux booleans for NFS
+  seboolean:
+    name: "{{ item }}"
+    state: yes
+    persistent: yes
+  loop: "{{ nfs_sebooleans }}"
+  notify: restart nfs
+
+... 
