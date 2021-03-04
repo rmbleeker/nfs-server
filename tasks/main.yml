@@ -53,6 +53,9 @@
     state: yes
     persistent: yes
   loop: "{{ nfs_sebooleans }}"
+  when:
+    - ansible_selinux.status == 'enabled'
+    - ansible_selinux_python_present
   notify: restart nfs
 
 ... 
