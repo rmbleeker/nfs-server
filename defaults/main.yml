@@ -9,4 +9,8 @@ nfs_rpc_services:
   - rpcbind.socket
   - rpc-statd.service
 
+nfs_sebooleans:
+  - nfs_export_all_ro
+  - nfs_export_all_rw
+
 ...
