@@ -32,10 +32,10 @@
   file:
     path: "{{ item.path | mandatory }}"
     state: directory
-    owner: "{{ item.owner | default(root) }}"
-    group: "{{ item.group | default(root) }}"
-    mode: "{{ item.mode | default(0755) }}"
-    setype: "{{ item.setype | default(nfs_t) }}"
+    owner: "{{ item.owner | default('root') }}"
+    group: "{{ item.group | default('root') }}"
+    mode: "{{ item.mode | default('0755') }}"
+    setype: "{{ item.setype | default('nfs_t') }}"
   loop: "{{ nfs_exports }}"
 
 - name: Populate the exports file.
