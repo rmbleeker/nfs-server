@@ -35,7 +35,7 @@
     owner: "{{ item.owner | default('root') }}"
     group: "{{ item.group | default('root') }}"
     mode: "{{ item.mode | default('0755') }}"
-    setype: "{{ item.setype | default('nfs_t') }}"
+    setype: "{{ item.setype | default(omit) }}"
   loop: "{{ nfs_exports }}"
 
 - name: Populate the exports file.
